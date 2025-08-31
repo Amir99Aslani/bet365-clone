@@ -1,0 +1,28 @@
+
+.container {
+  width: 100%;
+
+  .mainContainer {
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+
+
+    .sideBar {
+
+    }
+  }
+}
+
+@media screen and (max-width: 770px) {
+  .container {
+
+    .mainContainer {
+      display: block;
+
+      .sideBar {
+
+      }
+    }
+  }
+}
