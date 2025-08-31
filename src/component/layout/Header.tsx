@@ -1,12 +1,16 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import Image from "next/image";
-import { NavLink } from "@/component/uiAssets/NavLink";
-import { useI18n } from "@/app/ProviderComponent";
+import {NavLink} from "@/component/uiAssets/NavLink";
+import {useI18n} from "@/app/ProviderComponent";
 import React from "react";
 
-export default function Header() {
-    const { dict, locale = "en", updateLocale } = useI18n(); // get updateLocale
+interface Props {
+    currentLocale: string;
+}
+
+export default function Header({currentLocale}: Props) {
+    const {dict, locale = "en", updateLocale} = useI18n(); // get updateLocale
     const router = useRouter();
     const pathname = usePathname();
 
@@ -17,10 +21,9 @@ export default function Header() {
     };
 
 
-
     return (
         <header className="bg-gray-900 text-white flex justify-between items-center px-4 py-3">
-            <div className="flex justify-around m-2">
+            <div className=" flex flex-col lg:flex-row md:flex-row  justify-around m-2">
                 <div>
                     <Image
                         width={64}
@@ -31,7 +34,7 @@ export default function Header() {
                         alt="Bewin Logo"
                     />
                 </div>
-                <nav className="hidden md:flex space-x-6 ml-5">
+                <nav className=" md:flex space-x-6  mt-5 lg:mt-0 md:mt-0 lg:ml-5 md:ml-5">
                     <NavLink text={dict.sportsBetting} href=""/>
                     <NavLink text={dict.live} href="/live"/>
                     <NavLink text={dict.slots} href="/slots"/>

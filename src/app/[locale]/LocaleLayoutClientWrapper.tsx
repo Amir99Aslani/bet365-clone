@@ -1,52 +1,59 @@
 "use client";
-
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/ReduxStore";
+import ProviderComponent from "@/app/ProviderComponent";
 import Header from "@/component/layout/Header";
 import SideBar from "@/component/layout/SideBar";
 import Footer from "@/component/layout/Footer";
 import { Banner } from "@/component/home/Banner";
-import styles from './locale.module.scss';
-
-interface ActiveContextProps {
-    active: string;
-    setActive: (val: string) => void;
-}
-
-const ActiveContext = createContext<ActiveContextProps | undefined>(undefined);
-export const useActive = (): ActiveContextProps => {
-    const context = useContext(ActiveContext);
-    if (!context) throw new Error("useActive must be inside ActiveContext.Provider");
-    return context;
-};
+import styles from "./locale.module.scss";
+import en from "@/locales/en.json";
+import de from "@/locales/de.json";
 
 interface Props {
-    children: ReactNode;
+    children: React.ReactNode;
     locale: string;
 }
 
+// Active context
+interface ActiveContextType {
+    active: string;
+    setActive: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const ActiveContext = createContext<ActiveContextType | null>(null);
+export const useActive = () => {
+    const ctx = useContext(ActiveContext);
+    if (!ctx) throw new Error("useActive must be used within ActiveContext.Provider");
+    return ctx;
+};
+
+const dictionaries: Record<string, Record<string, string>> = { en, de };
+
 export default function LocaleLayoutClientWrapper({ children, locale }: Props) {
-    const [active, setActive] = useState<string>("Football");
+    const dict = dictionaries[locale] || en;
+    const [active, setActive] = useState("Football");
 
     useEffect(() => {
-        const savedLocale = localStorage.getItem("locale");
-        if (!savedLocale) localStorage.setItem("locale", locale);
+        localStorage.setItem("locale", locale);
     }, [locale]);
 
     return (
         <Provider store={store}>
-            <ActiveContext.Provider value={{ active, setActive }}>
-                <div className={`${styles.container} min-h-screen flex flex-col`}>
-                    <Header currentLocale={locale} />
-                    <Banner />
-                    <div className={`${styles.mainContainer}`}>
-                        <SideBar onActive={active} onSetActive={setActive} />
-                        <main className="lg:w-4/5 sm:w-full mt-3 mb-2">{children}</main>
+            <ProviderComponent dict={dict} currentLocale={locale}>
+                <ActiveContext.Provider value={{ active, setActive }}>
+                    <div className={`${styles.container} min-h-screen flex flex-col`}>
+                        <Header currentLocale={locale} />
+                        <Banner />
+                        <div className={styles.mainContainer}>
+                            <SideBar onActive={active} onSetActive={setActive} />
+                            <main className="lg:w-4/5 sm:w-full mt-3 mb-2">{children}</main>
+                        </div>
+                        <Footer />
                     </div>
-                    <Footer />
-                </div>
-            </ActiveContext.Provider>
+                </ActiveContext.Provider>
+            </ProviderComponent>
         </Provider>
     );
 }

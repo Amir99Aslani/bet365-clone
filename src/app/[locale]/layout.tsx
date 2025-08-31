@@ -1,13 +1,19 @@
-
 import React from "react";
 import LocaleLayoutClientWrapper from "./LocaleLayoutClientWrapper";
 
-interface Props {
+export default function LocaleLayout({
+                                         children,
+                                         params,
+                                     }: {
     children: React.ReactNode;
-    params: { locale: string };
-}
+    params: Promise<{ locale: string }>; // <--- Important: params is a Promise now
+}) {
+    // Unwrap the promise safely in server component
+    const { locale } = React.use(params);
 
-export default function LocaleLayout({ children, params }: Props) {
-    // Server-side layout passes locale as plain prop
-    return <LocaleLayoutClientWrapper locale={params.locale}>{children}</LocaleLayoutClientWrapper>;
+    return (
+        <LocaleLayoutClientWrapper locale={locale}>
+            {children}
+        </LocaleLayoutClientWrapper>
+    );
 }

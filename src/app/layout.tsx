@@ -1,37 +1,22 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
-import ProviderComponent from "@/app/ProviderComponent"; // client
-import Header from "@/component/layout/Header";
-import SideBar from "@/component/layout/SideBar";
-import Footer from "@/component/layout/Footer";
-import { Banner } from "@/component/home/Banner";
-import styles from './locale.module.scss';
+import React from "react";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistSans = Geist({
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
+});
 
-interface Props {
-    children: React.ReactNode;
-    params: { locale: string }; // server receives this
-}
+const geistMono = Geist_Mono({
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
+});
 
-export default function LocaleLayout({ children, params }: Props) {
-    const currentLocale = params.locale;
-
+export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
-        <html lang={currentLocale}>
+        <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ProviderComponent currentLocale={currentLocale}>
-            <div className={`${styles.container} min-h-screen flex flex-col`}>
-                <Header />
-                <Banner />
-                <div className={`${styles.mainContainer}`}>
-                    <SideBar />
-                    <main className="lg:w-4/5 sm:w-full mt-3 mb-2">{children}</main>
-                </div>
-                <Footer />
-            </div>
-        </ProviderComponent>
+        {children}
         </body>
         </html>
     );
